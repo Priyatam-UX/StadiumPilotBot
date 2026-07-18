@@ -62,8 +62,7 @@ export async function POST(req) {
     
     // Real Gemini call
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+    
     const systemPrompt = `
       You are StadiumPilot AI, the decision support system for the FIFA World Cup 2026 Operations Command Center.
       You are grounding all answers in the current stadium status snapshot:
@@ -72,10 +71,17 @@ export async function POST(req) {
       Respond directly, clearly, and concisely as an AI operations assistant. Answer operations and crowd questions only.
     `;
 
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: {
+        role: "system",
+        parts: [{ text: systemPrompt }]
+      }
+    });
+
     // Package history in correct format for Gemini SDK if provided
     const chat = model.startChat({
-      history: history.slice(-6), // Send last 3 exchanges to preserve token limits
-      systemInstruction: systemPrompt
+      history: history.slice(-6) // Send last 3 exchanges to preserve token limits
     });
 
     const result = await chat.sendMessage(sanitizedPrompt);
