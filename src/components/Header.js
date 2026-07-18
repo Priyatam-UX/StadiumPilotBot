@@ -1,12 +1,20 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { CloudSun, Clock3, Bell, CircleUserRound, Menu } from 'lucide-react';
+import { CloudSun, Clock3, Bell, CircleUserRound, Menu, X, ChevronDown, ShieldAlert, Award, Radio } from 'lucide-react';
 import { useOperations } from '@/context/OperationsContext';
 
 export default function Header() {
-  const { weather, playSound, theme, toggleTheme } = useOperations();
+  const { 
+    weather, 
+    playSound, 
+    mobileSidebarOpen, 
+    setMobileSidebarOpen, 
+    currentRole, 
+    setCurrentRole 
+  } = useOperations();
   const [currentTime, setCurrentTime] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileCard, setShowProfileCard] = useState(false);
 
   useEffect(() => {
     // Generate ticking clock format 00:00:00 or current local time
@@ -30,11 +38,20 @@ export default function Header() {
     <header className="sticky top-0 z-20 border-b border-border bg-[color:var(--surface)]/90 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-4 px-4 py-4 lg:px-8">
         
+        {/* Mobile Hamburger Navigation Button */}
+        <button 
+          onClick={() => {
+            setMobileSidebarOpen(!mobileSidebarOpen);
+            playSound('click');
+          }}
+          className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border bg-card/80 text-foreground lg:hidden hover:bg-muted/50 cursor-pointer shrink-0 transition"
+          aria-label="Toggle navigation menu"
+        >
+          {mobileSidebarOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
+        </button>
+
         {/* Brand/Mobile Title */}
         <div className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/15 text-sm font-semibold text-primary lg:hidden">
-            SP
-          </div>
           <div className="hidden items-center gap-3 lg:flex">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/15 text-sm font-semibold text-primary">
               SP
@@ -71,20 +88,13 @@ export default function Header() {
             Live data active
           </div>
 
-          {/* Theme Toggle in Header for convenience */}
-          <button 
-            onClick={toggleTheme}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card/80 text-foreground/80 transition-all hover:bg-muted/70 text-xs font-semibold"
-          >
-            {theme === 'dark' ? 'LIGHT' : 'DARK'}
-          </button>
-
           {/* Notification dropdown */}
           <div className="relative">
             <button 
               type="button" 
               onClick={() => {
                 setShowNotifications(!showNotifications);
+                setShowProfileCard(false);
                 playSound('click');
               }}
               className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card/80 text-foreground/80 transition-all duration-200 hover:border-primary/25 hover:bg-muted/70 hover:text-foreground" 
@@ -97,7 +107,7 @@ export default function Header() {
             </button>
             
             {showNotifications && (
-              <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-border bg-[color:var(--surface-strong)] p-4 shadow-premium z-50">
+              <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-border bg-[color:var(--surface-strong)] p-4 shadow-premium z-50 animate-fade-in">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border pb-2 mb-2">Live Alerts</p>
                 <div className="space-y-3">
                   {notificationsList.map(n => (
@@ -113,11 +123,71 @@ export default function Header() {
             )}
           </div>
 
-          {/* User profile details */}
-          <button className="inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-all duration-200 border border-border/85 bg-background/70 text-foreground hover:bg-muted/70 hover:border-primary/20 h-11 px-5 gap-2" type="button">
-            <CircleUserRound className="h-4 w-4" />
-            <span className="hidden sm:inline">Venue Organizer</span>
-          </button>
+          {/* User profile dropdown - Venue Organizer */}
+          <div className="relative">
+            <button 
+              onClick={() => {
+                setShowProfileCard(!showProfileCard);
+                setShowNotifications(false);
+                playSound('click');
+              }}
+              className="inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-all duration-200 border border-border/85 bg-background/70 text-foreground hover:bg-muted/70 hover:border-primary/20 h-11 px-4 gap-2" 
+              type="button"
+            >
+              <CircleUserRound className="h-4.5 w-4.5 text-primary" />
+              <span className="hidden sm:inline">{currentRole}</span>
+              <ChevronDown className={`h-3 w-3 text-muted-foreground transition-transform duration-200 ${showProfileCard ? 'rotate-180' : ''}`} />
+            </button>
+
+            {showProfileCard && (
+              <div className="absolute right-0 mt-3 w-72 rounded-2xl border border-border bg-[#0b1528] p-4 shadow-premium z-50 animate-fade-in space-y-4">
+                <div className="border-b border-border/60 pb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <CircleUserRound className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-foreground">Operator OP-7612</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">Role: {currentRole}</p>
+                    </div>
+                  </div>
+                  <div className="mt-2.5 rounded-lg bg-muted/20 px-2.5 py-1.5 text-[9px] uppercase tracking-wider text-primary font-bold inline-flex items-center gap-1 border border-primary/10">
+                    <Radio className="h-3 w-3 animate-pulse" /> Clearance: level 4
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <p className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground font-semibold px-1">Switch Active Role</p>
+                  
+                  {[
+                    { name: 'Venue Organizer', icon: Award, desc: 'Central command & routing' },
+                    { name: 'Security Director', icon: ShieldAlert, desc: 'Crisis logs & gates' },
+                    { name: 'Emergency Lead', icon: Radio, desc: 'Incident dispatch feeds' }
+                  ].map(r => (
+                    <button
+                      key={r.name}
+                      onClick={() => {
+                        setCurrentRole(r.name);
+                        setShowProfileCard(false);
+                        playSound('success');
+                      }}
+                      className={`flex w-full items-start gap-2.5 rounded-xl px-3 py-2 text-left transition-all ${
+                        currentRole === r.name 
+                          ? 'bg-primary/15 text-foreground border border-primary/20' 
+                          : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground border border-transparent'
+                      }`}
+                    >
+                      <r.icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                      <div>
+                        <p className="text-xs font-semibold">{r.name}</p>
+                        <p className="text-[9px] text-muted-foreground/80 mt-0.5">{r.desc}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
         </div>
       </div>

@@ -7,7 +7,6 @@ import { Settings, Sparkles, Sliders, Bell } from 'lucide-react';
 export default function SettingsPage() {
   const {
     // Config states
-    theme, toggleTheme,
     compactMode, setCompactMode,
     animations, setAnimations,
     soundEffects, setSoundEffects,
@@ -78,27 +77,6 @@ export default function SettingsPage() {
             <div className="grid gap-4 lg:grid-cols-2">
               <div className="space-y-3">
                 
-                {/* Theme toggle */}
-                <div className="flex min-h-[4.5rem] items-center justify-between gap-3 rounded-[1.2rem] border border-border bg-card/85 px-4 py-3 transition hover:border-primary/20">
-                  <div className="min-w-0 flex-1 pr-3">
-                    <p className="text-sm font-semibold text-foreground">Dark / Light Theme</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Switch the global appearance instantly.</p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <button 
-                      type="button" 
-                      onClick={toggleTheme}
-                      className="relative inline-flex h-7 w-14 items-center rounded-full border border-border p-1 bg-muted"
-                    >
-                      <span 
-                        className={`pointer-events-none flex h-5 w-5 items-center justify-center rounded-full bg-primary shadow-sm transition-transform duration-200 ${
-                          theme === 'light' ? 'translate-x-7' : 'translate-x-0'
-                        }`} 
-                      />
-                    </button>
-                  </div>
-                </div>
-
                 {/* Compact Mode toggle */}
                 <div className="flex min-h-[4.5rem] items-center justify-between gap-3 rounded-[1.2rem] border border-border bg-card/85 px-4 py-3 transition hover:border-primary/20">
                   <div className="min-w-0 flex-1 pr-3">
@@ -164,32 +142,15 @@ export default function SettingsPage() {
 
               </div>
               
-              <div className="space-y-3">
                 <div className="rounded-[1.2rem] border border-border bg-[color:var(--surface-muted)] p-4">
-                  <p className="text-sm font-semibold text-foreground">Theme Switcher Mode</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <button 
-                      onClick={theme === 'light' ? toggleTheme : undefined}
-                      className={`rounded-full border px-4 py-2 text-xs font-bold transition-all ${
-                        theme === 'dark' ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground'
-                      }`}
-                    >
-                      Dark Mode
-                    </button>
-                    <button 
-                      onClick={theme === 'dark' ? toggleTheme : undefined}
-                      className={`rounded-full border px-4 py-2 text-xs font-bold transition-all ${
-                        theme === 'light' ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground'
-                      }`}
-                    >
-                      Light Mode
-                    </button>
-                  </div>
+                  <p className="text-sm font-semibold text-foreground">Accessibility Guidance</p>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                    StadiumPilot AI enforces cyber-dark mode styling to minimize eye fatigue during high-stress operations.
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
         {/* AI layer settings card */}
         <div className="rounded-[1.6rem] border border-border bg-card/95 p-6 shadow-premium premium-card">

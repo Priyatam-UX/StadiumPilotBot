@@ -9,7 +9,9 @@ export function useOperations() {
 
 export function OperationsProvider({ children }) {
   // --- Settings States ---
-  const [theme, setTheme] = useState('dark');
+  const [theme] = useState('dark');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [currentRole, setCurrentRole] = useState('Venue Organizer');
   const [compactMode, setCompactMode] = useState(false);
   const [animations, setAnimations] = useState(true);
   const [soundEffects, setSoundEffects] = useState(true);
@@ -354,7 +356,9 @@ export function OperationsProvider({ children }) {
   return (
     <OperationsContext.Provider value={{
       // Config states
-      theme, toggleTheme,
+      theme, 
+      mobileSidebarOpen, setMobileSidebarOpen, 
+      currentRole, setCurrentRole,
       compactMode, setCompactMode,
       animations, setAnimations,
       soundEffects, setSoundEffects,
