@@ -32,7 +32,13 @@ export default function Dashboard() {
     aiRecommendation,
     loadingInsights,
     generateAIRecommendations,
-    playSound
+    playSound,
+    // Settings configs
+    compactMode,
+    enableAIRecommendations,
+    weatherWidget,
+    crowdPrediction,
+    transportStatusActive
   } = useOperations();
 
   const stats = [
@@ -76,24 +82,24 @@ export default function Dashboard() {
       icon: ShieldAlert,
       color: "text-[#EA5455] border-[#EA5455]/20 bg-[#EA5455]/10"
     },
-    {
+    ...(transportStatusActive ? [{
       label: "Transport Status",
       value: `${transportCapacity}%`,
       status: "On track",
       delta: "Shuttles maintaining cadence",
       icon: BusFront,
       color: "text-[#28C76F] border-[#28C76F]/20 bg-[#28C76F]/10"
-    }
+    }] : [])
   ];
 
   return (
     <AppShell>
       {/* Page Header Title */}
-      <section className="glass-panel rounded-[2rem] p-5 lg:p-7">
-        <div className="flex flex-col gap-4 border-b border-border pb-5 xl:flex-row xl:items-end xl:justify-between">
+      <section className={`glass-panel rounded-[2rem] ${compactMode ? 'p-3.5 lg:p-4' : 'p-5 lg:p-7'}`}>
+        <div className={`flex flex-col gap-4 border-b border-border xl:flex-row xl:items-end xl:justify-between ${compactMode ? 'pb-3' : 'pb-5'}`}>
           <div className="space-y-2">
             <p className="text-[11px] font-semibold uppercase tracking-[0.34em] text-primary">Dashboard</p>
-            <h1 className="text-4xl font-semibold tracking-tight text-foreground lg:text-5xl">
+            <h1 className={`font-semibold tracking-tight text-foreground ${compactMode ? 'text-2xl lg:text-3xl' : 'text-4xl lg:text-5xl'}`}>
               Stadium Operations Command Center
             </h1>
             <p className="max-w-4xl text-sm leading-6 text-muted-foreground lg:text-base">
@@ -114,75 +120,77 @@ export default function Dashboard() {
         </div>
 
         {/* AI Recommendations Console */}
-        <div className="mt-6">
-          <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card/95 shadow-[0_32px_90px_rgba(2,8,23,0.18)]">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,174,239,0.12),transparent_35%)] pointer-events-none" />
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#00AEEF] to-transparent opacity-60" />
-            
-            <div className="p-6 lg:p-8 space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] border border-border bg-muted/20 p-4">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-muted-foreground">AI Recommendation Engine</p>
-                  <p className="mt-1 text-sm leading-6 text-foreground/80">Generate a fresh operational recommendation from the current stadium snapshot.</p>
-                </div>
-                <button 
-                  onClick={generateAIRecommendations}
-                  disabled={loadingInsights}
-                  className="inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-all duration-200 bg-primary text-primary-foreground shadow-[0_0_26px_rgba(0,174,239,0.24)] hover:brightness-110 h-11 px-5 min-w-[190px] disabled:opacity-60"
-                >
-                  <Sparkles className={`mr-2 h-4 w-4 ${loadingInsights ? 'animate-spin' : ''}`} />
-                  {loadingInsights ? "Analyzing Snapshot..." : "Generate AI Insights"}
-                </button>
-              </div>
-
-              {/* Insights View Output */}
-              {aiRecommendation ? (
-                <div className="grid gap-5 lg:grid-cols-[1fr_auto]">
-                  <div className="space-y-4">
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold text-primary tracking-wider">Summary</span>
-                      <p className="text-base text-foreground leading-7 font-medium mt-1">{aiRecommendation.stadiumSummary}</p>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold text-primary tracking-wider">Prediction</span>
-                      <p className="text-sm text-foreground/90 leading-6 mt-1">{aiRecommendation.aiPrediction}</p>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold text-primary tracking-wider">Tactical Actions</span>
-                      <ul className="list-disc pl-5 mt-2 text-sm space-y-2 text-foreground/85">
-                        {aiRecommendation.recommendedActions.map((action, i) => (
-                          <li key={i}>{action}</li>
-                        ))}
-                      </ul>
-                    </div>
+        {enableAIRecommendations && (
+          <div className="mt-6 animate-fade-in">
+            <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card/95 shadow-[0_32px_90px_rgba(2,8,23,0.18)]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,174,239,0.12),transparent_35%)] pointer-events-none" />
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#00AEEF] to-transparent opacity-60" />
+              
+              <div className={`${compactMode ? 'p-4 space-y-4' : 'p-6 lg:p-8 space-y-6'}`}>
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] border border-border bg-muted/20 p-4">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-muted-foreground">AI Recommendation Engine</p>
+                    <p className="mt-1 text-sm leading-6 text-foreground/80">Generate a fresh operational recommendation from the current stadium snapshot.</p>
                   </div>
-                  
-                  {/* Score indicators */}
-                  <div className="border border-border/80 rounded-2xl bg-[color:var(--surface-muted)] p-5 flex flex-col justify-center min-w-[200px] text-center gap-4">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Tactical Focus Priority</p>
-                      <div className={`mt-2 inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-wider ${
-                        aiRecommendation.priority === 'Critical' ? 'bg-danger/15 text-danger border border-danger/25' :
-                        aiRecommendation.priority === 'High' ? 'bg-warning/15 text-warning border border-warning/25' :
-                        'bg-success/15 text-success border border-success/25'
-                      }`}>
-                        {aiRecommendation.priority}
+                  <button 
+                    onClick={generateAIRecommendations}
+                    disabled={loadingInsights}
+                    className="inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-all duration-200 bg-primary text-primary-foreground shadow-[0_0_26px_rgba(0,174,239,0.24)] hover:brightness-110 h-11 px-5 min-w-[190px] disabled:opacity-60"
+                  >
+                    <Sparkles className={`mr-2 h-4 w-4 ${loadingInsights ? 'animate-spin' : ''}`} />
+                    {loadingInsights ? "Analyzing Snapshot..." : "Generate AI Insights"}
+                  </button>
+                </div>
+
+                {/* Insights View Output */}
+                {aiRecommendation ? (
+                  <div className="grid gap-5 lg:grid-cols-[1fr_auto]">
+                    <div className="space-y-4">
+                      <div>
+                        <span className="text-[10px] uppercase font-semibold text-primary tracking-wider">Summary</span>
+                        <p className="text-base text-foreground leading-7 font-medium mt-1">{aiRecommendation.stadiumSummary}</p>
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase font-semibold text-primary tracking-wider">Prediction</span>
+                        <p className="text-sm text-foreground/90 leading-6 mt-1">{aiRecommendation.aiPrediction}</p>
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase font-semibold text-primary tracking-wider">Tactical Actions</span>
+                        <ul className="list-disc pl-5 mt-2 text-sm space-y-2 text-foreground/85">
+                          {aiRecommendation.recommendedActions.map((action, i) => (
+                            <li key={i}>{action}</li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Confidence Score</p>
-                      <p className="text-4xl font-extrabold text-foreground mt-1 font-heading">{aiRecommendation.confidenceScore}%</p>
+                    
+                    {/* Score indicators */}
+                    <div className="border border-border/80 rounded-2xl bg-[color:var(--surface-muted)] p-5 flex flex-col justify-center min-w-[200px] text-center gap-4">
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Mock Focus Priority</p>
+                        <div className={`mt-2 inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-wider ${
+                          aiRecommendation.priority === 'Critical' ? 'bg-danger/15 text-danger border border-danger/25' :
+                          aiRecommendation.priority === 'High' ? 'bg-warning/15 text-warning border border-warning/25' :
+                          'bg-success/15 text-success border border-success/25'
+                        }`}>
+                          {aiRecommendation.priority}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Confidence Score</p>
+                        <p className="text-4xl font-extrabold text-foreground mt-1 font-heading">{aiRecommendation.confidenceScore}%</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div className="rounded-[1.5rem] border border-border bg-card/85 p-5 text-sm leading-6 text-foreground/85">
-                  No AI recommendation has been generated yet. Use the button above to analyze the current stadium conditions.
-                </div>
-              )}
+                ) : (
+                  <div className="rounded-[1.5rem] border border-border bg-card/85 p-5 text-sm leading-6 text-foreground/85">
+                    No AI recommendation has been generated yet. Use the button above to analyze the current stadium conditions.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* Metrics Row */}
@@ -218,15 +226,15 @@ export default function Dashboard() {
       </section>
 
       {/* Grid: Map / Logs */}
-      <section className="grid gap-6 xl:grid-cols-[1fr_0.92fr]">
+      <section className={`grid gap-6 ${compactMode ? 'xl:grid-cols-[1fr_0.9fr]' : 'xl:grid-cols-[1fr_0.92fr]'}`}>
         
         {/* Left Side: Map panel */}
-        <div className="cursor-pointer rounded-[1.6rem] border border-border bg-card/95 p-6 shadow-premium hover:border-primary/10 transition-all duration-200">
-          <div className="space-y-5">
-            <div className="flex flex-col gap-3 border-b border-border pb-5 lg:flex-row lg:items-end lg:justify-between">
+        <div className={`cursor-pointer rounded-[1.6rem] border border-border bg-card/95 shadow-premium hover:border-primary/10 transition-all duration-200 ${compactMode ? 'p-4' : 'p-6'}`}>
+          <div className={`${compactMode ? 'space-y-3' : 'space-y-5'}`}>
+            <div className={`flex flex-col gap-3 border-b border-border lg:flex-row lg:items-end lg:justify-between ${compactMode ? 'pb-3' : 'pb-5'}`}>
               <div className="space-y-2">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">Stadium Map</p>
-                <h2 className="font-heading text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">Live stadium crowd map</h2>
+                <h2 className={`font-heading font-semibold tracking-tight text-foreground ${compactMode ? 'text-xl' : 'text-2xl lg:text-3xl'}`}>Live stadium crowd map</h2>
                 <p className="max-w-3xl text-sm leading-6 text-muted-foreground">Interactive SVG map representing zone-level crowd status across gates and support sections.</p>
               </div>
             </div>
@@ -235,44 +243,46 @@ export default function Dashboard() {
         </div>
 
         {/* Right Side: Logs / Briefs */}
-        <div className="space-y-6">
+        <div className={`space-y-6 ${compactMode ? 'space-y-4' : 'space-y-6'}`}>
           
           {/* Weather details */}
-          <div className="cursor-pointer rounded-[1.6rem] border border-border bg-card/95 p-6 shadow-premium transition-all">
-            <div className="space-y-5">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">Weather Summary</p>
-                <h2 className="font-heading text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">Venue weather conditions</h2>
-                <p className="text-sm leading-6 text-muted-foreground">Current conditions that affect crowd movement and staff endurance.</p>
+          {weatherWidget && (
+            <div className={`cursor-pointer rounded-[1.6rem] border border-border bg-card/95 shadow-premium transition-all ${compactMode ? 'p-4 animate-fade-in' : 'p-6 animate-fade-in'}`}>
+              <div className={`${compactMode ? 'space-y-3' : 'space-y-5'}`}>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">Weather Summary</p>
+                  <h2 className={`font-heading font-semibold tracking-tight text-foreground ${compactMode ? 'text-xl' : 'text-2xl lg:text-3xl'}`}>Venue weather conditions</h2>
+                  <p className="text-sm leading-6 text-muted-foreground">Current conditions that affect crowd movement and staff endurance.</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-border bg-card/80 p-4">
+                    <p className="text-[9px] uppercase tracking-[0.26em] text-muted-foreground font-semibold">Condition</p>
+                    <p className="mt-1 text-sm text-foreground/90 font-medium">{weather.condition}</p>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-card/80 p-4">
+                    <p className="text-[9px] uppercase tracking-[0.26em] text-muted-foreground font-semibold">Temperature</p>
+                    <p className="mt-1 text-sm text-foreground/90 font-medium">{weather.temperature}</p>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-card/80 p-4">
+                    <p className="text-[9px] uppercase tracking-[0.26em] text-muted-foreground font-semibold">Humidity</p>
+                    <p className="mt-1 text-sm text-foreground/90 font-medium">{weather.humidity}</p>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-card/80 p-4">
+                    <p className="text-[9px] uppercase tracking-[0.26em] text-muted-foreground font-semibold">Wind</p>
+                    <p className="mt-1 text-sm text-foreground/90 font-medium">{weather.wind}</p>
+                  </div>
+                </div>
+                <p className="text-sm leading-6 text-muted-foreground italic">{weather.advisory}</p>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-border bg-card/80 p-4">
-                  <p className="text-[9px] uppercase tracking-[0.26em] text-muted-foreground font-semibold">Condition</p>
-                  <p className="mt-1 text-sm text-foreground/90 font-medium">{weather.condition}</p>
-                </div>
-                <div className="rounded-2xl border border-border bg-card/80 p-4">
-                  <p className="text-[9px] uppercase tracking-[0.26em] text-muted-foreground font-semibold">Temperature</p>
-                  <p className="mt-1 text-sm text-foreground/90 font-medium">{weather.temperature}</p>
-                </div>
-                <div className="rounded-2xl border border-border bg-card/80 p-4">
-                  <p className="text-[9px] uppercase tracking-[0.26em] text-muted-foreground font-semibold">Humidity</p>
-                  <p className="mt-1 text-sm text-foreground/90 font-medium">{weather.humidity}</p>
-                </div>
-                <div className="rounded-2xl border border-border bg-card/80 p-4">
-                  <p className="text-[9px] uppercase tracking-[0.26em] text-muted-foreground font-semibold">Wind</p>
-                  <p className="mt-1 text-sm text-foreground/90 font-medium">{weather.wind}</p>
-                </div>
-              </div>
-              <p className="text-sm leading-6 text-muted-foreground italic">{weather.advisory}</p>
             </div>
-          </div>
+          )}
 
           {/* Incident Feed */}
-          <div className="cursor-pointer rounded-[1.6rem] border border-border bg-card/95 p-6 shadow-premium transition-all">
+          <div className={`cursor-pointer rounded-[1.6rem] border border-border bg-card/95 shadow-premium transition-all ${compactMode ? 'p-4' : 'p-6'}`}>
             <div className="space-y-4">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">Recent Incidents</p>
-                <h2 className="font-heading text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">Control room incident feed</h2>
+                <h2 className={`font-heading font-semibold tracking-tight text-foreground ${compactMode ? 'text-xl' : 'text-2xl lg:text-3xl'}`}>Control room incident feed</h2>
                 <p className="text-sm leading-6 text-muted-foreground">Latest stadium incidents, current status, and operational severity.</p>
               </div>
               
@@ -310,11 +320,11 @@ export default function Dashboard() {
           </div>
 
           {/* Volunteer Status Overview */}
-          <div className="cursor-pointer rounded-[1.6rem] border border-border bg-card/95 p-6 shadow-premium transition-all">
+          <div className={`cursor-pointer rounded-[1.6rem] border border-border bg-card/95 shadow-premium transition-all ${compactMode ? 'p-4' : 'p-6'}`}>
             <div className="space-y-4">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">Volunteer Status</p>
-                <h2 className="font-heading text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">Operations staffing overview</h2>
+                <h2 className={`font-heading font-semibold tracking-tight text-foreground ${compactMode ? 'text-xl' : 'text-2xl lg:text-3xl'}`}>Operations staffing overview</h2>
                 <p className="text-sm leading-6 text-muted-foreground">Command team coverage across the active control window.</p>
               </div>
               <div className="grid gap-3 sm:grid-cols-3 text-center">
@@ -342,33 +352,39 @@ export default function Dashboard() {
       <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         
         {/* Crowd index line chart */}
-        <div className="cursor-pointer rounded-[1.6rem] border border-border bg-card/95 p-6 shadow-premium transition-all">
-          <div className="space-y-4">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">Operational Insights</p>
-              <h2 className="font-heading text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">Crowd Density Chart</h2>
-              <p className="text-sm leading-6 text-muted-foreground">Projected crowd pressure and throughput trend across the current match window.</p>
-            </div>
-            
-            <div className="flex gap-4 text-xs text-muted-foreground mt-2">
-              <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-[#00AEEF]" /> Crowd Index
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-[#28C76F]" /> Throughput %
-              </span>
-            </div>
+        {crowdPrediction ? (
+          <div className={`cursor-pointer rounded-[1.6rem] border border-border bg-card/95 shadow-premium transition-all ${compactMode ? 'p-4 animate-fade-in' : 'p-6 animate-fade-in'}`}>
+            <div className="space-y-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">Operational Insights</p>
+                <h2 className={`font-heading font-semibold tracking-tight text-foreground ${compactMode ? 'text-xl' : 'text-2xl lg:text-3xl'}`}>Crowd Density Chart</h2>
+                <p className="text-sm leading-6 text-muted-foreground">Projected crowd pressure and throughput trend across the current match window.</p>
+              </div>
+              
+              <div className="flex gap-4 text-xs text-muted-foreground mt-2">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-[#00AEEF]" /> Crowd Index
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-[#28C76F]" /> Throughput %
+                </span>
+              </div>
 
-            <CrowdChart />
+              <CrowdChart />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="rounded-[1.6rem] border border-border bg-card/85 p-5 text-sm text-muted-foreground flex items-center justify-center">
+            Crowd Density Predictions are deactivated in Control Panel settings.
+          </div>
+        )}
 
         {/* Operational Briefing Note */}
-        <div className="cursor-pointer rounded-[1.6rem] border border-border bg-card/95 p-6 shadow-premium transition-all">
+        <div className={`cursor-pointer rounded-[1.6rem] border border-border bg-card/95 shadow-premium transition-all ${compactMode ? 'p-4' : 'p-6'}`}>
           <div className="space-y-5">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">Command Notes</p>
-              <h2 className="font-heading text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">Operational briefing</h2>
+              <h2 className={`font-heading font-semibold tracking-tight text-foreground ${compactMode ? 'text-xl' : 'text-2xl lg:text-3xl'}`}>Operational briefing</h2>
               <p className="text-sm leading-6 text-muted-foreground">Key actions and staffing posture for the next control interval.</p>
             </div>
             

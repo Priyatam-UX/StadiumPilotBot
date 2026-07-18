@@ -4,7 +4,7 @@ import { useOperations } from '@/context/OperationsContext';
 import { MapPinned } from 'lucide-react';
 
 export default function StadiumMap() {
-  const { stadiumZones, playSound } = useOperations();
+  const { stadiumZones, playSound, crowdHeatmap, zoneHighlight } = useOperations();
   const [hoveredZone, setHoveredZone] = useState(null);
   const [selectedZone, setSelectedZone] = useState(null);
 
@@ -72,8 +72,10 @@ export default function StadiumMap() {
           {stadiumZones.map((zone) => {
             const isHovered = hoveredZone === zone.name;
             const isSelected = selectedZone === zone.name;
-            const color = getStatusColor(zone.status);
-            const border = getBorderColor(zone.status);
+            
+            const color = crowdHeatmap ? getStatusColor(zone.status) : 'rgba(148, 163, 184, 0.2)';
+            const border = crowdHeatmap ? getBorderColor(zone.status) : 'rgba(148, 163, 184, 0.4)';
+            const actualColor = getStatusColor(zone.status);
             
             return (
               <g 
@@ -102,7 +104,7 @@ export default function StadiumMap() {
                   className="transition-all duration-200"
                   opacity={isHovered ? 0.95 : (isSelected ? 0.9 : 0.72)}
                   style={{
-                    filter: isHovered ? `drop-shadow(0 0 6px ${color})` : 'none'
+                    filter: (zoneHighlight && (isHovered || (zone.status === 'red' && zone.name !== 'Main Pitch'))) ? `drop-shadow(0 0 5px ${actualColor})` : 'none'
                   }}
                 />
                 {/* Zone text labels inside shapes */}

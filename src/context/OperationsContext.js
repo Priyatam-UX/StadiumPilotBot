@@ -163,8 +163,34 @@ export function OperationsProvider({ children }) {
 
       const storedSounds = localStorage.getItem('sp-sounds');
       if (storedSounds) setSoundEffects(storedSounds === 'true');
+
+      const storedAnims = localStorage.getItem('sp-anims');
+      if (storedAnims) setAnimations(storedAnims === 'true');
     }
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sp-anims', animations.toString());
+      if (animations) {
+        document.body.classList.remove('no-animations');
+      } else {
+        document.body.classList.add('no-animations');
+      }
+    }
+  }, [animations]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sp-compact', compactMode.toString());
+    }
+  }, [compactMode]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sp-sounds', soundEffects.toString());
+    }
+  }, [soundEffects]);
 
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
