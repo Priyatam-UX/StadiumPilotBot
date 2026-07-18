@@ -293,10 +293,38 @@ export function OperationsProvider({ children }) {
         body: JSON.stringify({ snapshot, demoMode: enableDemoMode })
       });
       const data = await res.json();
-      setAiRecommendation(data);
-      playSound('success');
+      
+      if (res.ok && data && !data.error && data.stadiumSummary) {
+        setAiRecommendation(data);
+        playSound('success');
+      } else {
+        console.error("AI Insights API returned error:", data);
+        setAiRecommendation({
+          stadiumSummary: `Failed to compile automated operational recommendations. ${data.error || 'API Error'}: ${data.details || 'Please verify your GEMINI_API_KEY environment variable on Vercel.'}`,
+          aiPrediction: "Projected bottlenecks are unanalyzed.",
+          aiReasoning: "Snapshot analysis was aborted due to authorization failure or serverless limits.",
+          recommendedActions: [
+            "Check your Vercel Dashboard for GEMINI_API_KEY validity.",
+            "Verify your settings page to ensure correct configurations.",
+            "Re-run metrics update and retry compilation manually."
+          ],
+          priority: "Medium",
+          confidenceScore: 0
+        });
+      }
     } catch (e) {
       console.error("AI Insights API error:", e);
+      setAiRecommendation({
+        stadiumSummary: `Failed to connect to AI recommendation service. Error: ${e.message}`,
+        aiPrediction: "Analysis unavailable.",
+        aiReasoning: "Connection timeout or offline state detected.",
+        recommendedActions: [
+          "Check server connectivity status.",
+          "Verify that the deployment on Vercel is complete."
+        ],
+        priority: "Medium",
+        confidenceScore: 0
+      });
     } finally {
       setLoadingInsights(false);
     }
