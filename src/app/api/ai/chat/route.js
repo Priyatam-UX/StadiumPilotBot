@@ -71,21 +71,31 @@ export async function POST(req) {
       Respond directly, clearly, and concisely as an AI operations assistant. Answer operations and crowd questions only.
     `;
 
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash-latest",
-      systemInstruction: {
-        role: "system",
-        parts: [{ text: systemPrompt }]
+    const CHAT_MODEL_FALLBACKS = ["gemini-2.5-flash", "gemini-2.5-flash-preview-04-17", "gemini-3.5-flash"];
+    let lastError = null;
+
+    for (const modelId of CHAT_MODEL_FALLBACKS) {
+      try {
+        const model = genAI.getGenerativeModel({ 
+          model: modelId,
+          systemInstruction: {
+            role: "system",
+            parts: [{ text: systemPrompt }]
+          }
+        });
+
+        const chat = model.startChat({
+          history: history.slice(-6)
+        });
+
+        const result = await chat.sendMessage(sanitizedPrompt);
+        return NextResponse.json({ reply: result.response.text() });
+      } catch (modelErr) {
+        console.warn(`Chat model ${modelId} failed: ${modelErr.message}`);
+        lastError = modelErr;
       }
-    });
-
-    // Package history in correct format for Gemini SDK if provided
-    const chat = model.startChat({
-      history: history.slice(-6) // Send last 3 exchanges to preserve token limits
-    });
-
-    const result = await chat.sendMessage(sanitizedPrompt);
-    return NextResponse.json({ reply: result.response.text() });
+    }
+    throw lastError;
     
   } catch (e) {
     console.error("AI Chat API failed:", e);

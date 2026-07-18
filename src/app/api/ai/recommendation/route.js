@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Model fallback chain — tries each in order until one succeeds
+// Only models confirmed available on v1beta as of July 2026
 const MODEL_FALLBACKS = [
-  "gemini-1.5-flash-latest",
-  "gemini-1.5-flash",
-  "gemini-1.5-flash-8b",
-  "gemini-pro",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-preview-04-17",
+  "gemini-3.5-flash",
 ];
 
 export async function POST(req) {
@@ -66,7 +65,6 @@ export async function POST(req) {
 
     const userPrompt = `Current Stadium Snapshot: ${JSON.stringify(snapshot)}`;
 
-    // Try each model in the fallback chain
     const genAI = new GoogleGenerativeAI(apiKey);
     let lastError = null;
 
@@ -95,11 +93,9 @@ export async function POST(req) {
       } catch (modelErr) {
         console.warn(`Model ${modelId} failed: ${modelErr.message}`);
         lastError = modelErr;
-        // Continue to next model in chain
       }
     }
 
-    // All models in the chain failed
     throw lastError;
     
   } catch (e) {
