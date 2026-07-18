@@ -227,7 +227,7 @@ export default function Dashboard() {
       </section>
 
       {/* Grid: Map / Logs */}
-      <section className={`grid gap-6 ${compactMode ? 'xl:grid-cols-[1.6fr_1fr]' : 'xl:grid-cols-[1.7fr_1fr]'}`}>
+      <section className={`grid gap-6 ${compactMode ? 'xl:grid-cols-[1fr_0.55fr]' : 'xl:grid-cols-[1fr_0.5fr]'}`}>
         
         {/* Left Side: Map panel */}
         <div className={`cursor-pointer rounded-[1.6rem] border border-border bg-card/95 shadow-premium hover:border-primary/10 transition-all duration-200 ${compactMode ? 'p-4' : 'p-6'}`}>

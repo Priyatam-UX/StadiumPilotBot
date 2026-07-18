@@ -88,7 +88,7 @@ export default function StadiumMap() {
   const currentHoverDetails = stadiumZones.find(z => z.name === hoveredZone);
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
+    <div className="flex flex-col gap-5">
 
       {/* Interactive Map SVG Wrapper */}
       <div
@@ -311,57 +311,55 @@ export default function StadiumMap() {
         </svg>
       </div>
 
-      {/* Zone status sidebar */}
-      <div className="space-y-3">
-        <div className="rounded-[1.4rem] border border-border bg-card/85 p-4 max-h-[420px] overflow-y-auto no-scrollbar">
-          <p className="text-[10px] uppercase tracking-[0.26em] text-muted-foreground flex items-center gap-1.5 mb-3">
-            <MapPinned className="h-3 w-3 text-primary" /> Active Zone Status
-          </p>
-          <div className="space-y-2">
-            {stadiumZones.map((zone) => {
-              const color = getStatusColor(zone.status);
-              const isSelected = selectedZone === zone.name;
-              return (
-                <button
-                  key={zone.name}
-                  type="button"
-                  onClick={() => {
-                    setSelectedZone(zone.name === selectedZone ? null : zone.name);
-                    playSound('click');
-                  }}
-                  className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-left transition-all duration-200 ${
-                    isSelected
-                      ? 'border-primary bg-primary/10 shadow-sm'
-                      : 'border-border bg-muted/30 hover:border-primary/20 hover:bg-muted/50'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="h-2 w-2 rounded-full shrink-0"
-                      style={{
-                        backgroundColor: color,
-                        boxShadow: zone.status !== 'green' ? `0 0 6px ${color}` : 'none',
-                      }}
-                    />
-                    <div>
-                      <p className="text-xs font-semibold text-foreground">{zone.name}</p>
-                      <p className="text-[10px] text-muted-foreground truncate max-w-[130px]">{zone.note}</p>
-                    </div>
-                  </div>
-                  <div
-                    className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wide shrink-0"
+      {/* Zone status list — full width below the map */}
+      <div className="rounded-[1.4rem] border border-border bg-card/85 p-4">
+        <p className="text-[10px] uppercase tracking-[0.26em] text-muted-foreground flex items-center gap-1.5 mb-3">
+          <MapPinned className="h-3 w-3 text-primary" /> Active Zone Status
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {stadiumZones.map((zone) => {
+            const color = getStatusColor(zone.status);
+            const isSelected = selectedZone === zone.name;
+            return (
+              <button
+                key={zone.name}
+                type="button"
+                onClick={() => {
+                  setSelectedZone(zone.name === selectedZone ? null : zone.name);
+                  playSound('click');
+                }}
+                className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-left transition-all duration-200 ${
+                  isSelected
+                    ? 'border-primary bg-primary/10 shadow-sm'
+                    : 'border-border bg-muted/30 hover:border-primary/20 hover:bg-muted/50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    className="h-2 w-2 rounded-full shrink-0"
                     style={{
-                      borderColor: `${color}40`,
-                      backgroundColor: `${color}12`,
-                      color,
+                      backgroundColor: color,
+                      boxShadow: zone.status !== 'green' ? `0 0 6px ${color}` : 'none',
                     }}
-                  >
-                    {zone.crowdPercent}%
+                  />
+                  <div>
+                    <p className="text-xs font-semibold text-foreground">{zone.name}</p>
+                    <p className="text-[10px] text-muted-foreground">{zone.note}</p>
                   </div>
-                </button>
-              );
-            })}
-          </div>
+                </div>
+                <div
+                  className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wide shrink-0 ml-2"
+                  style={{
+                    borderColor: `${color}40`,
+                    backgroundColor: `${color}12`,
+                    color,
+                  }}
+                >
+                  {zone.crowdPercent}%
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
