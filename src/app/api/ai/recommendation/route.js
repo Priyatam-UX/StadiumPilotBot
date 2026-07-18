@@ -57,14 +57,15 @@ export async function POST(req) {
       Analyze the provided stadium operations metrics snapshot and generate a structured JSON report.
       
       Return ONLY a JSON object matching this schema:
-      {
-        "stadiumSummary": "A concise operational summary highlighting critical areas.",
-        "aiPrediction": "Predictive warnings of crowd density risks or bottlenecks (e.g. within 15 mins).",
-        "aiReasoning": "Contextual reasoning based on incidents, weather, volunteers, and zone metrics.",
-        "recommendedActions": ["List of 3-4 specific tactical actions for organizers to take."],
-        "priority": "Critical" | "High" | "Medium" | "Low",
-        "confidenceScore": 85
-      }
+       {
+         "stadiumSummary": "A concise operational summary highlighting critical areas.",
+         "aiPrediction": "Predictive warnings of crowd density risks or bottlenecks.",
+         "aiReasoning": "Contextual reasoning based on metrics.",
+         "recommendedActions": ["Tactical Action 1", "Tactical Action 2"],
+         "priority": "High",
+         "confidenceScore": 90
+       }
+       Note: The value of "priority" must be one of: "Critical", "High", "Medium", "Low". Do not use TypeScript unions or pipes in your response. Ensure all double quotes inside string values are properly escaped.
     `;
 
     const userPrompt = `Current Stadium Snapshot: ${JSON.stringify(snapshot)}`;
