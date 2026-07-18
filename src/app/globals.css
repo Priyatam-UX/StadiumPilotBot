@@ -177,5 +177,85 @@ svg rect, svg ellipse {
   animation: floatGrid 25s linear infinite;
 }
 
+/* Radar Sensor Beam Sweep */
+@keyframes radarSweep {
+  0% {
+    transform: scale(0.65);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.32;
+  }
+  85% {
+    opacity: 0.12;
+  }
+  100% {
+    transform: scale(1.06);
+    opacity: 0;
+  }
+}
+
+.radar-beam {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: radarSweep 5s infinite linear;
+  pointer-events: none;
+}
+
+/* Map Zone warning pulses */
+@keyframes redPulse {
+  0% {
+    opacity: 0.72;
+    filter: drop-shadow(0 0 1px #EA5455);
+  }
+  50% {
+    opacity: 0.96;
+    filter: drop-shadow(0 0 6px #EA5455);
+  }
+  100% {
+    opacity: 0.72;
+    filter: drop-shadow(0 0 1px #EA5455);
+  }
+}
+
+@keyframes yellowPulse {
+  0% {
+    opacity: 0.72;
+    filter: drop-shadow(0 0 1px #FF9F43);
+  }
+  50% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 4.5px #FF9F43);
+  }
+  100% {
+    opacity: 0.72;
+    filter: drop-shadow(0 0 1px #FF9F43);
+  }
+}
+
+.zone-pulse-red {
+  animation: redPulse 2s infinite ease-in-out;
+}
+
+.zone-pulse-yellow {
+  animation: yellowPulse 2.8s infinite ease-in-out;
+}
+
+/* Stadium SVG Zone Spring Scaling on Hover */
+.stadium-zone {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              fill 0.3s ease, 
+              stroke 0.3s ease, 
+              opacity 0.3s ease;
+}
+
+.stadium-zone:hover {
+  transform: scale(1.045);
+  opacity: 0.98 !important;
+}
+
+
 
 

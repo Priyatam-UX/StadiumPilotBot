@@ -68,6 +68,9 @@ export default function StadiumMap() {
           <ellipse cx="50" cy="50" rx="46" ry="42" fill="none" stroke="var(--border)" strokeWidth="1" />
           <ellipse cx="50" cy="50" rx="38" ry="34" fill="rgba(255,255,255,0.02)" stroke="var(--border)" strokeWidth="0.6" strokeDasharray="2,2" />
           
+          {/* Radar sensor beam sweep */}
+          <ellipse cx="50" cy="50" rx="38" ry="34" fill="none" stroke="rgba(0,174,239,0.32)" strokeWidth="0.8" className="radar-beam" />
+          
           {/* Loop over the structured zones and render SVG shapes */}
           {stadiumZones.map((zone) => {
             const isHovered = hoveredZone === zone.name;
@@ -75,7 +78,9 @@ export default function StadiumMap() {
             
             const color = crowdHeatmap ? getStatusColor(zone.status) : 'rgba(148, 163, 184, 0.2)';
             const border = crowdHeatmap ? getBorderColor(zone.status) : 'rgba(148, 163, 184, 0.4)';
-            const actualColor = getStatusColor(zone.status);
+            const pulseClass = (zoneHighlight && zone.name !== "Main Pitch")
+              ? (zone.status === "red" ? "zone-pulse-red" : zone.status === "yellow" ? "zone-pulse-yellow" : "")
+              : "";
             
             return (
               <g 
@@ -101,11 +106,8 @@ export default function StadiumMap() {
                   fill={zone.name === "Main Pitch" ? "url(#pitch-grad)" : color}
                   stroke={isSelected ? '#00AEEF' : border}
                   strokeWidth={isSelected ? 1.5 : 0.8}
-                  className="transition-all duration-200"
+                  className={`stadium-zone ${pulseClass}`}
                   opacity={isHovered ? 0.95 : (isSelected ? 0.9 : 0.72)}
-                  style={{
-                    filter: (zoneHighlight && (isHovered || (zone.status === 'red' && zone.name !== 'Main Pitch'))) ? `drop-shadow(0 0 5px ${actualColor})` : 'none'
-                  }}
                 />
                 {/* Zone text labels inside shapes */}
                 <text 
