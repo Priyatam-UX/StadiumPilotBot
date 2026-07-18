@@ -152,13 +152,7 @@ export function OperationsProvider({ children }) {
   // --- Persistent Settings Sync ---
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedTheme = localStorage.getItem('sp-theme');
-      if (storedTheme) {
-        setTheme(storedTheme);
-        document.documentElement.className = storedTheme;
-      } else {
-        document.documentElement.className = 'dark';
-      }
+      document.documentElement.className = 'dark';
       
       const storedCompact = localStorage.getItem('sp-compact');
       if (storedCompact) setCompactMode(storedCompact === 'true');
@@ -193,14 +187,6 @@ export function OperationsProvider({ children }) {
       localStorage.setItem('sp-sounds', soundEffects.toString());
     }
   }, [soundEffects]);
-
-  const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    localStorage.setItem('sp-theme', nextTheme);
-    document.documentElement.className = nextTheme;
-    playSound('click');
-  };
 
   // --- Dynamic Live Data Simulation ---
   useEffect(() => {
