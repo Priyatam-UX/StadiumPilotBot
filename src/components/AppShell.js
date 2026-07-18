@@ -8,7 +8,7 @@ export default function AppShell({ children }) {
   const { theme } = useOperations();
   
   return (
-    <div className={`min-h-screen bg-[color:var(--background)] text-foreground lg:grid lg:grid-cols-[auto_1fr]`}>
+    <div className={`min-h-screen bg-[color:var(--background)] text-foreground lg:grid lg:grid-cols-[auto_1fr] ambient-grid`}>
       {/* Navigation Sidebar */}
       <Sidebar />
       

@@ -172,4 +172,35 @@ svg rect, svg ellipse {
   transition: none !important;
 }
 
+/* Staggered load animation delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* Animated grid backgrounds */
+@keyframes floatGrid {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}
+
+.ambient-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  animation: floatGrid 25s linear infinite;
+}
+
+.light .ambient-grid {
+  background-image: 
+    linear-gradient(to right, rgba(15, 23, 42, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+}
+
+
 

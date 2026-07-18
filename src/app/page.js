@@ -197,11 +197,12 @@ export default function Dashboard() {
       <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         {stats.map((s, index) => {
           const Icon = s.icon;
+          const delayClass = index === 1 ? 'delay-100' : index === 2 ? 'delay-200' : index === 3 ? 'delay-300' : index >= 4 ? 'delay-400' : '';
           return (
             <div 
               key={index}
               onClick={() => playSound('click')}
-              className="cursor-pointer rounded-[1.6rem] border text-card-foreground shadow-premium transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/20 border-border bg-card/95"
+              className={`cursor-pointer rounded-[1.6rem] border text-card-foreground shadow-premium transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/20 border-border bg-card/95 animate-fade-in ${delayClass}`}
             >
               <div className="flex h-full items-start justify-between gap-4 p-5">
                 <div className="space-y-3">
