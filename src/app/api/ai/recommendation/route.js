@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// Model fallback chain — tries each in order until one succeeds
+const MODEL_FALLBACKS = [
+  "gemini-1.5-flash-latest",
+  "gemini-1.5-flash",
+  "gemini-1.5-flash-8b",
+  "gemini-pro",
+];
+
 export async function POST(req) {
   try {
     const body = await req.json();
@@ -10,22 +18,18 @@ export async function POST(req) {
 
     const { snapshot, demoMode } = body;
     
-    // Check if snapshot is valid object
     if (snapshot && typeof snapshot !== 'object') {
       return NextResponse.json({ error: "Invalid snapshot format" }, { status: 400 });
     }
 
-    // Check if we should run in mock/simulation mode
     const apiKey = process.env.GEMINI_API_KEY;
     const isMock = demoMode || !apiKey;
     
     if (isMock) {
-      // Find high occupancy zones to make mock answers extremely realistic
       const sortedZones = [...(snapshot?.zones || [])].sort((a, b) => b.load - a.load);
       const busiestZone = sortedZones[0]?.name || "North Gate";
       const busiestLoad = sortedZones[0]?.load || 86;
       
-      // Simulate recommendation grounded in current metrics
       const mockResponse = {
         stadiumSummary: `${busiestZone} is currently the highest-pressure area on site with an occupancy load of ${busiestLoad}%. Ingress flow is entering peak rates. Movement remains controlled, but dwell times at adjacent plazas are beginning to climb.`,
         aiPrediction: `Crowd pressure at ${busiestZone} is projected to exceed the safety buffer in 8 minutes and reach critical capacity within 15 minutes if active gates are not supplemented.`,
@@ -37,21 +41,13 @@ export async function POST(req) {
           `Alert first-aid station ${snapshot?.medicalAlerts > 2 ? 'units' : 'reserve staffs'} for precautionary coverage.`
         ],
         priority: busiestLoad > 80 ? "Critical" : (busiestLoad > 65 ? "High" : "Medium"),
-        confidenceScore: Math.floor(Math.random() * 10) + 85 // 85-95%
+        confidenceScore: Math.floor(Math.random() * 10) + 85
       };
       
-      // Simulate delay for realism
       await new Promise(resolve => setTimeout(resolve, 800));
       return NextResponse.json(mockResponse);
     }
     
-    // Real Gemini API call
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest",
-      generationConfig: { responseMimeType: "application/json" }
-    });
-
     const systemPrompt = `
       You are StadiumPilot AI, the decision support system for the FIFA World Cup 2026 Operations Command Center.
       Analyze the provided stadium operations metrics snapshot and generate a structured JSON report.
@@ -65,23 +61,46 @@ export async function POST(req) {
          "priority": "High",
          "confidenceScore": 90
        }
-       Note: The value of "priority" must be one of: "Critical", "High", "Medium", "Low". Do not use TypeScript unions or pipes in your response. Ensure all double quotes inside string values are properly escaped.
+       Note: The value of "priority" must be one of: "Critical", "High", "Medium", "Low". Do not use TypeScript unions or pipes. Ensure all double quotes inside string values are properly escaped.
     `;
 
     const userPrompt = `Current Stadium Snapshot: ${JSON.stringify(snapshot)}`;
 
-    const result = await model.generateContent([
-      { text: systemPrompt },
-      { text: userPrompt }
-    ]);
-    
-    const text = result.response.text();
-    let cleanText = text.trim();
-    if (cleanText.startsWith('```')) {
-      cleanText = cleanText.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/, '');
+    // Try each model in the fallback chain
+    const genAI = new GoogleGenerativeAI(apiKey);
+    let lastError = null;
+
+    for (const modelId of MODEL_FALLBACKS) {
+      try {
+        console.log(`Trying model: ${modelId}`);
+        const model = genAI.getGenerativeModel({
+          model: modelId,
+          generationConfig: { responseMimeType: "application/json" }
+        });
+
+        const result = await model.generateContent([
+          { text: systemPrompt },
+          { text: userPrompt }
+        ]);
+        
+        const text = result.response.text();
+        let cleanText = text.trim();
+        if (cleanText.startsWith('```')) {
+          cleanText = cleanText.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/, '');
+        }
+        const parsed = JSON.parse(cleanText.trim());
+        console.log(`Success with model: ${modelId}`);
+        return NextResponse.json(parsed);
+
+      } catch (modelErr) {
+        console.warn(`Model ${modelId} failed: ${modelErr.message}`);
+        lastError = modelErr;
+        // Continue to next model in chain
+      }
     }
-    const parsed = JSON.parse(cleanText.trim());
-    return NextResponse.json(parsed);
+
+    // All models in the chain failed
+    throw lastError;
     
   } catch (e) {
     console.error("AI Recommendation API failed:", e);
