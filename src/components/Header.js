@@ -75,6 +75,12 @@ export default function Header() {
             <CloudSun className="h-4 w-4 text-primary" />
             <span className="text-sm text-foreground/80">{weather.condition}</span>
             <span className="text-sm text-muted-foreground">{weather.temperature}</span>
+            {weather.city && (
+              <span className="text-[10px] text-muted-foreground font-mono border-l border-border/50 pl-2">{weather.city}</span>
+            )}
+            {weather.isLive && (
+              <span className="text-[9px] font-bold uppercase tracking-wider text-[#28C76F] border border-[#28C76F]/30 bg-[#28C76F]/10 px-1.5 py-0.5 rounded-full">LIVE</span>
+            )}
           </div>
 
           {/* Dynamic timer clock */}

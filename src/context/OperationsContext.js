@@ -74,8 +74,11 @@ export function OperationsProvider({ children }) {
     temperature: "31°C",
     humidity: "46%",
     wind: "12 km/h NE",
-    advisory: "Heat load is manageable, but hydration support should remain visible in public routes."
+    city: "Dallas",
+    advisory: "Heat load is manageable, but hydration support should remain visible in public routes.",
+    isLive: false,
   });
+  const [weatherLoading, setWeatherLoading] = useState(false);
 
   const [trends, setTrends] = useState([
     { time: "14:00", crowdIndex: 64, throughput: 72 },
@@ -148,6 +151,37 @@ export function OperationsProvider({ children }) {
       console.warn("Audio Context failed to start:", e);
     }
   };
+
+  // --- Live Weather Data Fetcher ---
+  const fetchLiveWeather = async (city = 'dallas') => {
+    setWeatherLoading(true);
+    try {
+      const res = await fetch(`/api/weather?city=${city}`);
+      if (!res.ok) throw new Error('Weather fetch failed');
+      const data = await res.json();
+      setWeather({
+        condition: data.condition,
+        temperature: data.temperature,
+        humidity: data.humidity,
+        wind: data.wind,
+        city: data.city,
+        advisory: data.advisory,
+        isLive: data.isLive,
+      });
+    } catch (e) {
+      console.error('Weather fetch error:', e);
+    } finally {
+      setWeatherLoading(false);
+    }
+  };
+
+  // Fetch weather on mount and refresh every 5 minutes
+  useEffect(() => {
+    fetchLiveWeather();
+    const weatherInterval = setInterval(() => fetchLiveWeather(), 5 * 60 * 1000);
+    return () => clearInterval(weatherInterval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // --- Persistent Settings Sync ---
   useEffect(() => {
@@ -373,7 +407,7 @@ export function OperationsProvider({ children }) {
       transportCapacity,
       incidents, setIncidents,
       stadiumZones, setStadiumZones,
-      weather,
+      weather, weatherLoading, fetchLiveWeather,
       trends,
       
       // AI insights
