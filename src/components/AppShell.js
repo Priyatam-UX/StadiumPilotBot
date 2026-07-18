@@ -21,6 +21,14 @@ export default function AppShell({ children }) {
   return (
     <div className="min-h-screen bg-[color:var(--background)] text-foreground lg:grid lg:grid-cols-[auto_1fr] ambient-grid relative">
       
+      {/* Skip to Content Accessibility Link */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+      >
+        Skip to main content
+      </a>
+
       {/* Navigation Sidebar (Desktop) */}
       <Sidebar />
 
@@ -36,6 +44,9 @@ export default function AppShell({ children }) {
           <aside 
             className="w-[280px] h-full bg-[#0b1528]/95 border-r border-border p-5 flex flex-col gap-4 animate-bubble" 
             onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation drawer"
           >
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div>
@@ -47,7 +58,8 @@ export default function AppShell({ children }) {
                   setMobileSidebarOpen(false);
                   playSound('click');
                 }}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground focus:ring-2 focus:ring-primary"
+                aria-label="Close navigation menu"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -85,7 +97,7 @@ export default function AppShell({ children }) {
       <div className="flex min-h-screen flex-col overflow-y-auto">
         <Header />
         
-        <main className="flex-1 px-4 py-5 lg:px-8 lg:py-8">
+        <main id="main-content" tabIndex="-1" className="flex-1 px-4 py-5 lg:px-8 lg:py-8 focus:outline-none">
           <div className="mx-auto flex w-full max-w-[1680px] flex-col gap-6 animate-fade-in">
             {children}
           </div>

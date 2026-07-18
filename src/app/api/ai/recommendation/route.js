@@ -3,8 +3,18 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req) {
   try {
-    const { snapshot, demoMode } = await req.json();
+    const body = await req.json();
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ error: "Invalid request payload" }, { status: 400 });
+    }
+
+    const { snapshot, demoMode } = body;
     
+    // Check if snapshot is valid object
+    if (snapshot && typeof snapshot !== 'object') {
+      return NextResponse.json({ error: "Invalid snapshot format" }, { status: 400 });
+    }
+
     // Check if we should run in mock/simulation mode
     const apiKey = process.env.GEMINI_API_KEY;
     const isMock = demoMode || !apiKey;

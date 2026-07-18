@@ -3,13 +3,35 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req) {
   try {
-    const { prompt, history, snapshot, demoMode } = await req.json();
-    
+    // Basic Rate Limiting check or size validation
+    const body = await req.json();
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ error: "Invalid request payload" }, { status: 400 });
+    }
+
+    const { prompt, history, snapshot, demoMode } = body;
+
+    // Sanitize and Validate Prompt
+    if (typeof prompt !== 'string' || prompt.trim() === '') {
+      return NextResponse.json({ error: "Prompt is required and must be a string" }, { status: 400 });
+    }
+    if (prompt.length > 2000) {
+      return NextResponse.json({ error: "Prompt exceeds maximum allowed length" }, { status: 400 });
+    }
+
+    // Strip HTML/Script tags to prevent potential XSS injection
+    const sanitizedPrompt = prompt.replace(/<[^>]*>/g, '').trim();
+
+    // Validate history
+    if (history && !Array.isArray(history)) {
+      return NextResponse.json({ error: "History must be an array" }, { status: 400 });
+    }
+
     const apiKey = process.env.GEMINI_API_KEY;
     const isMock = demoMode || !apiKey;
     
     if (isMock) {
-      const lowerPrompt = prompt.toLowerCase();
+      const lowerPrompt = sanitizedPrompt.toLowerCase();
       let reply = "";
       
       const sortedZones = [...(snapshot?.zones || [])].sort((a, b) => b.load - a.load);
@@ -56,7 +78,7 @@ export async function POST(req) {
       systemInstruction: systemPrompt
     });
 
-    const result = await chat.sendMessage(prompt);
+    const result = await chat.sendMessage(sanitizedPrompt);
     return NextResponse.json({ reply: result.response.text() });
     
   } catch (e) {

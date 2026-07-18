@@ -99,6 +99,8 @@ export default function Header() {
               }}
               className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card/80 text-foreground/80 transition-all duration-200 hover:border-primary/25 hover:bg-muted/70 hover:text-foreground" 
               aria-label="Open notifications"
+              aria-expanded={showNotifications}
+              aria-haspopup="true"
             >
               <Bell className="h-4 w-4" />
               <span className="absolute right-1.5 top-1.5 min-w-5 rounded-full bg-[#EA5455] px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
@@ -107,11 +109,11 @@ export default function Header() {
             </button>
             
             {showNotifications && (
-              <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-border bg-[color:var(--surface-strong)] p-4 shadow-premium z-50 animate-fade-in">
+              <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-border bg-[color:var(--surface-strong)] p-4 shadow-premium z-50 animate-fade-in" role="menu">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border pb-2 mb-2">Live Alerts</p>
                 <div className="space-y-3">
                   {notificationsList.map(n => (
-                    <div key={n.id} className="text-xs border-b border-border/30 pb-2 last:border-0 last:pb-0">
+                    <div key={n.id} className="text-xs border-b border-border/30 pb-2 last:border-0 last:pb-0" role="menuitem">
                       <div className="flex justify-between font-medium text-foreground/90">
                         <span>{n.text}</span>
                         <span className="text-[10px] text-muted-foreground font-mono">{n.time}</span>
@@ -133,6 +135,9 @@ export default function Header() {
               }}
               className="inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-all duration-200 border border-border/85 bg-background/70 text-foreground hover:bg-muted/70 hover:border-primary/20 h-11 px-4 gap-2" 
               type="button"
+              aria-label="Toggle user profile menu"
+              aria-expanded={showProfileCard}
+              aria-haspopup="true"
             >
               <CircleUserRound className="h-4.5 w-4.5 text-primary" />
               <span className="hidden sm:inline">{currentRole}</span>
