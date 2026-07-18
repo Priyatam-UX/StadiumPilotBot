@@ -82,11 +82,16 @@ export async function POST(req) {
         ]);
         
         const text = result.response.text();
-        let cleanText = text.trim();
-        if (cleanText.startsWith('```')) {
-          cleanText = cleanText.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/, '');
+        
+        // Robustly extract just the JSON object — handles markdown blocks,
+        // preamble text, and any trailing commentary the model adds
+        const firstBrace = text.indexOf('{');
+        const lastBrace = text.lastIndexOf('}');
+        if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+          throw new Error('Model response did not contain a valid JSON object');
         }
-        const parsed = JSON.parse(cleanText.trim());
+        const jsonStr = text.slice(firstBrace, lastBrace + 1);
+        const parsed = JSON.parse(jsonStr);
         console.log(`Success with model: ${modelId}`);
         return NextResponse.json(parsed);
 
