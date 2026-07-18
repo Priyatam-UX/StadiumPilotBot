@@ -325,22 +325,34 @@ export function OperationsProvider({ children }) {
     };
 
     try {
+      // Filter history to ensure all messages have valid non-empty text to avoid schema violations
+      const validHistory = messages
+        .filter(m => m.text && typeof m.text === 'string' && m.text.trim() !== '')
+        .map(m => ({
+          role: m.sender === 'ai' ? 'model' : 'user',
+          parts: [{ text: m.text }]
+        }));
+
       const res = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: text,
-          history: messages.map(m => ({ role: m.sender === 'ai' ? 'model' : 'user', parts: [{ text: m.text }] })),
+          history: validHistory,
           snapshot,
           demoMode: enableDemoMode
         })
       });
       const data = await res.json();
       
+      const replyText = res.ok && data.reply 
+        ? data.reply 
+        : (data.error ? `Error: ${data.error}. ${data.details || ''}` : "AI assistant is temporarily offline. Please verify your GEMINI_API_KEY environment variable on Vercel.");
+
       const aiMsg = {
         id: Date.now() + 1,
         sender: 'ai',
-        text: data.reply,
+        text: replyText,
         timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
         structured: data.structured || null
       };
