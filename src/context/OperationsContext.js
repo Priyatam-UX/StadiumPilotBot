@@ -325,13 +325,26 @@ export function OperationsProvider({ children }) {
     };
 
     try {
-      // Filter history to ensure all messages have valid non-empty text to avoid schema violations
-      const validHistory = messages
-        .filter(m => m.text && typeof m.text === 'string' && m.text.trim() !== '')
-        .map(m => ({
-          role: m.sender === 'ai' ? 'model' : 'user',
-          parts: [{ text: m.text }]
-        }));
+      // Filter history to ensure all messages have valid text and the list begins with a 'user' message
+      const validHistory = [];
+      let foundUserMsg = false;
+      
+      for (const m of messages) {
+        if (!m.text || typeof m.text !== 'string' || m.text.trim() === '') continue;
+        
+        const role = m.sender === 'ai' ? 'model' : 'user';
+        if (role === 'user') {
+          foundUserMsg = true;
+        }
+        
+        // Only start pushing to history once we encounter the first user message
+        if (foundUserMsg) {
+          validHistory.push({
+            role,
+            parts: [{ text: m.text }]
+          });
+        }
+      }
 
       const res = await fetch('/api/ai/chat', {
         method: 'POST',
