@@ -58,15 +58,15 @@ export function OperationsProvider({ children }) {
   ]);
 
   const [stadiumZones, setStadiumZones] = useState([
-    { name: "Gate A", crowdPercent: 32, status: "green", x: 8, y: 34, width: 18, height: 12, note: "Primary ingress lane" },
-    { name: "Gate B", crowdPercent: 74, status: "yellow", x: 8, y: 52, width: 18, height: 12, note: "Queue pressure building" },
-    { name: "Main Pitch", crowdPercent: 11, status: "green", x: 33, y: 29, width: 34, height: 30, note: "Clear field of play" },
-    { name: "Gate C", crowdPercent: 86, status: "red", x: 72, y: 34, width: 18, height: 12, note: "Concourse spill risk" },
-    { name: "Gate D", crowdPercent: 47, status: "green", x: 72, y: 52, width: 18, height: 12, note: "Stable departures" },
-    { name: "Food Court", crowdPercent: 63, status: "yellow", x: 33, y: 10, width: 34, height: 14, note: "Dwell time elevated" },
-    { name: "Medical Center", crowdPercent: 18, status: "green", x: 74, y: 10, width: 14, height: 10, note: "Low occupancy" },
-    { name: "Parking", crowdPercent: 58, status: "yellow", x: 8, y: 76, width: 30, height: 12, note: "Transport demand rising" },
-    { name: "VIP Area", crowdPercent: 21, status: "green", x: 62, y: 76, width: 28, height: 12, note: "Controlled access" },
+    { name: "Gate A", crowdPercent: 32, status: "green", x: 5, y: 34, width: 20, height: 13, note: "Primary ingress lane" },
+    { name: "Gate B", crowdPercent: 74, status: "yellow", x: 5, y: 53, width: 20, height: 13, note: "Queue pressure building" },
+    { name: "Main Pitch", crowdPercent: 11, status: "green", x: 31, y: 28, width: 38, height: 30, note: "Clear field of play" },
+    { name: "Gate C", crowdPercent: 89, status: "red", x: 75, y: 34, width: 20, height: 13, note: "Concourse spill risk" },
+    { name: "Gate D", crowdPercent: 47, status: "green", x: 75, y: 53, width: 20, height: 13, note: "Stable departures" },
+    { name: "Food Court", crowdPercent: 63, status: "yellow", x: 31, y: 10, width: 30, height: 14, note: "Dwell time elevated" },
+    { name: "Medical", crowdPercent: 18, status: "green", x: 66, y: 10, width: 29, height: 14, note: "Low occupancy" },
+    { name: "Parking", crowdPercent: 58, status: "yellow", x: 5, y: 76, width: 32, height: 13, note: "Transport demand rising" },
+    { name: "VIP Area", crowdPercent: 21, status: "green", x: 63, y: 76, width: 32, height: 13, note: "Controlled access" },
   ]);
 
   const [weather, setWeather] = useState({

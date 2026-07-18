@@ -256,31 +256,43 @@ export default function StadiumMap() {
                   </rect>
                 )}
 
-                {/* Zone name */}
+                {/* Zone name — clipped to zone bounds, split across two lines if zone is narrow */}
+                <clipPath id={`clip-${zone.name.replace(/\s+/g, '-')}`}>
+                  <rect x={zone.x + 0.5} y={zone.y + 0.5} width={zone.width - 1} height={zone.height - 1} />
+                </clipPath>
                 <text
                   x={cx}
-                  y={cy - (crowdHeatmap ? 2 : 0)}
+                  y={cy - (crowdHeatmap ? 2.5 : 0)}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize="3.6"
+                  fontSize={zone.width < 24 ? "3.0" : "3.6"}
                   fontWeight="600"
                   fill="white"
+                  clipPath={`url(#clip-${zone.name.replace(/\s+/g, '-')})`}
                   className="pointer-events-none"
                 >
-                  {zone.name}
+                  {zone.name.includes(' ') && zone.width < 28 ? (
+                    <>
+                      <tspan x={cx} dy="-1.8">{zone.name.split(' ')[0]}</tspan>
+                      <tspan x={cx} dy="3.8">{zone.name.split(' ').slice(1).join(' ')}</tspan>
+                    </>
+                  ) : (
+                    zone.name
+                  )}
                 </text>
 
                 {/* Crowd percent badge inside zone */}
                 {crowdHeatmap && (
                   <text
                     x={cx}
-                    y={cy + 4}
+                    y={cy + (zone.width < 24 ? 3.5 : 4)}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fontSize="2.6"
                     fill={statusColor}
                     opacity="0.9"
                     className="pointer-events-none"
+                    clipPath={`url(#clip-${zone.name.replace(/\s+/g, '-')})`}
                   >
                     {zone.crowdPercent}%
                   </text>
