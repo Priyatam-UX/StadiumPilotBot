@@ -75,7 +75,11 @@ export async function POST(req) {
     ]);
     
     const text = result.response.text();
-    const parsed = JSON.parse(text.trim());
+    let cleanText = text.trim();
+    if (cleanText.startsWith('```')) {
+      cleanText = cleanText.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/, '');
+    }
+    const parsed = JSON.parse(cleanText.trim());
     return NextResponse.json(parsed);
     
   } catch (e) {
