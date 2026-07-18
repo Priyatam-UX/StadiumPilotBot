@@ -337,6 +337,7 @@ export function OperationsProvider({ children }) {
     if (!aiRecommendation && enableAIRecommendations) {
       generateAIRecommendations();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enableAIRecommendations]);
 
   return (

@@ -6,3 +6,6 @@ global.fetch = jest.fn().mockImplementation(() =>
     json: () => Promise.resolve({}),
   })
 );
+
+// Polyfill HTML Element scrollIntoView for test environments
+window.HTMLElement.prototype.scrollIntoView = jest.fn();

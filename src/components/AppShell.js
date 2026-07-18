@@ -77,6 +77,7 @@ export default function AppShell({ children }) {
                       setMobileSidebarOpen(false);
                       playSound('click');
                     }}
+                    prefetch={false}
                     className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm transition-all duration-200 ${
                       isActive 
                         ? "bg-primary/15 text-foreground border border-primary/20 shadow-sm" 

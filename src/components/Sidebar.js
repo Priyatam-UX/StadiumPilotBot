@@ -59,6 +59,7 @@ export default function Sidebar() {
               href={item.href}
               onClick={() => playSound('click')}
               aria-current={isActive ? 'page' : undefined}
+              prefetch={false}
               className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm transition-all duration-200 ${
                 isActive 
                   ? "bg-primary/15 text-foreground shadow-[0_0_0_1px_rgba(0,174,239,0.18)]" 
