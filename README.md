@@ -1,5 +1,4 @@
-# 🏟️ StadiumPilot AI — Operations Command Center
-
+# 🏟️ StadiumPilot AI
 [![Live Link](https://img.shields.io/badge/Live%20Demo-Vercel-blueviolet?style=for-the-badge&logo=vercel)](https://stadiumpilot-bot.vercel.app/)
 [![Build Status](https://img.shields.io/badge/Build-Passed-success?style=for-the-badge)](https://stadiumpilot-bot.vercel.app/)
 [![ESLint](https://img.shields.io/badge/Linter-Clean-success?style=for-the-badge)](https://stadiumpilot-bot.vercel.app/)
