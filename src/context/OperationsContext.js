@@ -17,7 +17,7 @@ export function OperationsProvider({ children }) {
   const [soundEffects, setSoundEffects] = useState(true);
   const [enableAIRecommendations, setEnableAIRecommendations] = useState(true);
   const [enableAIAssistant, setEnableAIAssistant] = useState(true);
-  const [enableDemoMode, setEnableDemoMode] = useState(true);
+  const [enableDemoMode, setEnableDemoMode] = useState(false);
   const [autoAIRefresh, setAutoAIRefresh] = useState(true);
   const [refreshInterval, setRefreshInterval] = useState(30);
   const [liveDataActive, setLiveDataActive] = useState(true);
