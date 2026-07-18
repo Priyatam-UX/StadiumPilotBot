@@ -88,7 +88,7 @@ export default function StadiumMap() {
   const currentHoverDetails = stadiumZones.find(z => z.name === hoveredZone);
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[1fr_280px]">
+    <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
 
       {/* Interactive Map SVG Wrapper */}
       <div
