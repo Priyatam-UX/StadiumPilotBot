@@ -25,7 +25,7 @@ import { fileURLToPath } from 'url';
 // ── Config ──────────────────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL   = 'gemini-1.5-flash';
+const GEMINI_MODEL   = 'gemini-3.5-flash';
 const GEMINI_URL     = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
 // Parse CLI args
@@ -83,6 +83,9 @@ async function callGemini(prompt) {
       }),
     });
     const data = await res.json();
+    if (!data.candidates) {
+      warn(`Gemini API returned error: ${JSON.stringify(data)}`);
+    }
     return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? 'No response from Gemini.';
   } catch (e) {
     return `AI generation failed: ${e.message}`;
@@ -90,24 +93,8 @@ async function callGemini(prompt) {
 }
 
 function buildPitchPrompt(lead, tweet) {
-  return `You are a GTM expert writing a Twitter DM for StadiumPilot AI — an AI-powered command center for stadium & tournament venue operations (FIFA World Cup 2026 focused).
-
-Write a SHORT, natural, non-robotic Twitter DM (max 280 chars) to this person:
-
-Name: ${lead.name || 'Stadium professional'}
-Bio: ${lead.bio || 'N/A'}
-Location: ${lead.location || 'N/A'}
-Followers: ${lead.followers || 'N/A'}
-Their tweet: "${tweet.text?.slice(0, 200)}"
-
-Rules:
-- Sound human, warm, and curious — not salesy
-- Reference something specific from their bio OR tweet
-- End with a soft question or a link to try: https://stadiumpilot-bot.vercel.app
-- Max 280 characters total
-- No hashtags in the DM
-
-Output ONLY the DM text, nothing else.`;
+  return `Write a short, professional, and friendly direct message (max 200 characters) to ${lead.name || 'a stadium manager'} (handle: @${lead.username}) who tweeted: "${tweet.text?.slice(0, 150)}".
+Pitch StadiumPilot AI (https://stadiumpilot-bot.vercel.app) to solve stadium operations. Do not include any greeting tags like "Subject:" or formatting tags. Do not write any thoughts, critiquing steps, or character checks. Output only the DM message itself.`;
 }
 
 function escapeCSV(val) {
