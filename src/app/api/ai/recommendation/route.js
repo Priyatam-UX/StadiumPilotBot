@@ -48,7 +48,7 @@ export async function POST(req) {
     // Real Gemini API call
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-flash-latest",
       generationConfig: { responseMimeType: "application/json" }
     });
 
