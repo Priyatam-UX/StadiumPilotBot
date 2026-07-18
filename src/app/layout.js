@@ -15,8 +15,8 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  title: 'StadiumPilot AI',
-  description: 'AI-powered stadium operations assistant for FIFA World Cup 2026 venue organizers.',
+  title: 'StadiumPilot AI by Priyatam',
+  description: 'AI-powered stadium operations assistant for FIFA World Cup 2026 venue organizers. Built by Priyatam.',
 };
 
 export default function RootLayout({ children }) {

@@ -58,7 +58,7 @@ export default function Header() {
             </div>
             <div>
               <p className="font-heading text-xl font-semibold tracking-tight text-foreground">StadiumPilot AI</p>
-              <p className="text-xs text-muted-foreground">FIFA World Cup 2026 Operations Command Center</p>
+              <p className="text-xs text-muted-foreground">by <span className="text-primary font-semibold">Priyatam</span> · FIFA World Cup 2026 Ops</p>
             </div>
           </div>
           <div className="cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors border-[#28C76F]/30 bg-[#28C76F]/12 text-[#28C76F] hidden lg:inline-flex">
@@ -158,8 +158,8 @@ export default function Header() {
                       <CircleUserRound className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-foreground">Operator OP-7612</p>
-                      <p className="text-[10px] text-muted-foreground font-mono">Role: {currentRole}</p>
+                      <p className="font-heading text-base font-semibold text-foreground">StadiumPilot AI</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">by Priyatam · {currentRole}</p>
                     </div>
                   </div>
                   <div className="mt-2.5 rounded-lg bg-muted/20 px-2.5 py-1.5 text-[9px] uppercase tracking-wider text-primary font-bold inline-flex items-center gap-1 border border-primary/10">

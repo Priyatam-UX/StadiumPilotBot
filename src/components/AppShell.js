@@ -103,6 +103,18 @@ export default function AppShell({ children }) {
             {children}
           </div>
         </main>
+
+        {/* Copyright Footer */}
+        <footer className="border-t border-border/50 px-4 py-4 lg:px-8">
+          <div className="mx-auto flex w-full max-w-[1680px] flex-col items-center justify-between gap-2 sm:flex-row">
+            <p className="text-[11px] text-muted-foreground">
+              © {new Date().getFullYear()} <span className="text-primary font-semibold">Priyatam</span>. All rights reserved.
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              StadiumPilot AI &middot; Built for FIFA World Cup 2026 &middot; Powered by Google Gemini
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
