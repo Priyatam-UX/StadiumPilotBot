@@ -9,6 +9,7 @@ export function useOperations() {
 
 export function OperationsProvider({ children }) {
   // --- Settings States ---
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [theme] = useState('dark');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [currentRole, setCurrentRole] = useState('Venue Organizer');
@@ -17,7 +18,7 @@ export function OperationsProvider({ children }) {
   const [soundEffects, setSoundEffects] = useState(true);
   const [enableAIRecommendations, setEnableAIRecommendations] = useState(true);
   const [enableAIAssistant, setEnableAIAssistant] = useState(true);
-  const [enableDemoMode, setEnableDemoMode] = useState(false);
+  const [enableDemoMode, setEnableDemoMode] = useState(true);
   const [autoAIRefresh, setAutoAIRefresh] = useState(true);
   const [refreshInterval, setRefreshInterval] = useState(30);
   const [liveDataActive, setLiveDataActive] = useState(true);
@@ -203,6 +204,8 @@ export function OperationsProvider({ children }) {
       if (localStorage.getItem('sp-zone-highlight')  !== null) setZoneHighlight(b('sp-zone-highlight'));
       if (localStorage.getItem('sp-crowd-pred')      !== null) setCrowdPrediction(b('sp-crowd-pred'));
       if (localStorage.getItem('sp-interval')        !== null) setRefreshInterval(n('sp-interval', 30));
+      
+      setSettingsLoaded(true);
     }
   }, []);
 
@@ -439,11 +442,11 @@ export function OperationsProvider({ children }) {
 
   // --- Auto-trigger initial AI insights on load ---
   useEffect(() => {
-    if (!aiRecommendation && enableAIRecommendations) {
+    if (settingsLoaded && !aiRecommendation && enableAIRecommendations) {
       generateAIRecommendations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enableAIRecommendations]);
+  }, [settingsLoaded, enableAIRecommendations]);
 
   return (
     <OperationsContext.Provider value={{
