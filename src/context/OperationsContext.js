@@ -187,15 +187,22 @@ export function OperationsProvider({ children }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       document.documentElement.className = 'dark';
-      
-      const storedCompact = localStorage.getItem('sp-compact');
-      if (storedCompact) setCompactMode(storedCompact === 'true');
 
-      const storedSounds = localStorage.getItem('sp-sounds');
-      if (storedSounds) setSoundEffects(storedSounds === 'true');
+      const b = (key) => localStorage.getItem(key) === 'true';
+      const n = (key, fallback) => { const v = localStorage.getItem(key); return v !== null ? Number(v) : fallback; };
 
-      const storedAnims = localStorage.getItem('sp-anims');
-      if (storedAnims) setAnimations(storedAnims === 'true');
+      if (localStorage.getItem('sp-compact')         !== null) setCompactMode(b('sp-compact'));
+      if (localStorage.getItem('sp-sounds')          !== null) setSoundEffects(b('sp-sounds'));
+      if (localStorage.getItem('sp-anims')           !== null) setAnimations(b('sp-anims'));
+      if (localStorage.getItem('sp-demo')            !== null) setEnableDemoMode(b('sp-demo'));
+      if (localStorage.getItem('sp-weather')         !== null) setWeatherWidget(b('sp-weather'));
+      if (localStorage.getItem('sp-ai-rec')          !== null) setEnableAIRecommendations(b('sp-ai-rec'));
+      if (localStorage.getItem('sp-ai-chat')         !== null) setEnableAIAssistant(b('sp-ai-chat'));
+      if (localStorage.getItem('sp-auto-refresh')    !== null) setAutoAIRefresh(b('sp-auto-refresh'));
+      if (localStorage.getItem('sp-heatmap')         !== null) setCrowdHeatmap(b('sp-heatmap'));
+      if (localStorage.getItem('sp-zone-highlight')  !== null) setZoneHighlight(b('sp-zone-highlight'));
+      if (localStorage.getItem('sp-crowd-pred')      !== null) setCrowdPrediction(b('sp-crowd-pred'));
+      if (localStorage.getItem('sp-interval')        !== null) setRefreshInterval(n('sp-interval', 30));
     }
   }, []);
 
@@ -221,6 +228,17 @@ export function OperationsProvider({ children }) {
       localStorage.setItem('sp-sounds', soundEffects.toString());
     }
   }, [soundEffects]);
+
+  // Persist all remaining settings
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('sp-demo',           enableDemoMode.toString()); }, [enableDemoMode]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('sp-weather',        weatherWidget.toString()); }, [weatherWidget]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('sp-ai-rec',         enableAIRecommendations.toString()); }, [enableAIRecommendations]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('sp-ai-chat',        enableAIAssistant.toString()); }, [enableAIAssistant]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('sp-auto-refresh',   autoAIRefresh.toString()); }, [autoAIRefresh]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('sp-heatmap',        crowdHeatmap.toString()); }, [crowdHeatmap]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('sp-zone-highlight', zoneHighlight.toString()); }, [zoneHighlight]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('sp-crowd-pred',     crowdPrediction.toString()); }, [crowdPrediction]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('sp-interval',       refreshInterval.toString()); }, [refreshInterval]);
 
   // --- Dynamic Live Data Simulation ---
   useEffect(() => {
