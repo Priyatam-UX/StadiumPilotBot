@@ -83,15 +83,25 @@ export async function POST(req) {
         
         const text = result.response.text();
         
-        // Robustly extract just the JSON object — handles markdown blocks,
-        // preamble text, and any trailing commentary the model adds
-        const firstBrace = text.indexOf('{');
-        const lastBrace = text.lastIndexOf('}');
-        if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
-          throw new Error('Model response did not contain a valid JSON object');
+        // Bracket-depth parser: finds the exact matching } for the first {
+        // Handles string literals and escape characters so inner } in values are ignored
+        const start = text.indexOf('{');
+        if (start === -1) throw new Error('Model response contained no JSON object');
+        
+        let depth = 0, inString = false, escape = false;
+        let end = -1;
+        for (let i = start; i < text.length; i++) {
+          const c = text[i];
+          if (escape)        { escape = false; continue; }
+          if (c === '\\' && inString) { escape = true; continue; }
+          if (c === '"')     { inString = !inString; continue; }
+          if (inString)      continue;
+          if (c === '{')     depth++;
+          if (c === '}')     { depth--; if (depth === 0) { end = i; break; } }
         }
-        const jsonStr = text.slice(firstBrace, lastBrace + 1);
-        const parsed = JSON.parse(jsonStr);
+        if (end === -1) throw new Error('Model response contained incomplete JSON object');
+        
+        const parsed = JSON.parse(text.slice(start, end + 1));
         console.log(`Success with model: ${modelId}`);
         return NextResponse.json(parsed);
 
